@@ -2,7 +2,8 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
 export const register = async (req, res) => {
-  const { name, username, email, password } = req.body;
+  try {
+    const { name, username, email, password } = req.body;
 
   if (!name || !username || !email || !password) {
     return res.status(400).json({
@@ -16,7 +17,7 @@ export const register = async (req, res) => {
   });
 
   if (existingUser) {
-    return res.status(409).json({
+    return res.status(401).json({
       success: false,
       message: "Email or username already exists",
     });
@@ -33,11 +34,21 @@ export const register = async (req, res) => {
     password: hashedPassword,
   });
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "Registered Successfully",
   });
-};
+
+  } catch (error) {
+    console.error(error)
+  }
+
+  return res.status(500).json({
+    success:false,
+    message:"Internal Server Error"
+  })
+}
+
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
