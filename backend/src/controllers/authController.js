@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/generateTokens.js";
 
 export const register = async (req, res) => {
   try {
@@ -33,6 +34,9 @@ export const register = async (req, res) => {
     email,
     password: hashedPassword,
   });
+
+const token = generateToken(user._id);
+console.log(token);
 
   return res.status(200).json({
     success: true,
