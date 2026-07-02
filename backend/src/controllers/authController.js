@@ -8,56 +8,55 @@ export const register = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
 
-  if (!name || !username || !email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "All fields are required",
+    if (!name || !username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
     });
-  }
 
-  const existingUser = await User.findOne({
-    $or: [{ email }, { username }],
-  });
+    if (existingUser) {
+      return res.status(401).json({
+        success: false,
+        message: "Email or username already exists",
+      });
+    }
 
-  if (existingUser) {
-    return res.status(401).json({
-      success: false,
-      message: "Email or username already exists",
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      username,
+      email,
+      password: hashedPassword,
     });
-  }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
- 
-  const user = await User.create({
-    name,
-    username,
-    email,
-    password: hashedPassword,
-  });
+    const token = generateToken(user._id);
 
-const token = generateToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-res.cookie("token",token,{
-  httpOnly:true,
-  secure:process.env.NODE_ENV === "production",
-  sameSite:"strict",
-  maxAge: 7*24*60*60*1000,
-})
-
-  return res.status(200).json({
-    success: true,
-    message: "Registered Successfully",
-  });
-
+    return res.status(200).json({
+      success: true,
+      message: "Registered Successfully",
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 
   return res.status(500).json({
-    success:false,
-    message:"Internal Server Error"
-  })
-}
+    success: false,
+    message: "Internal Server Error",
+  });
+};
 
 //! Login Controller :-
 
@@ -65,65 +64,80 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Email or Password",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Email or Password",
+      });
+    }
+
+    const token = generateToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login Success",
+      user: {
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
       success: false,
-      message: "All fields required",
+      message: "Internal Server Error",
     });
   }
+};
 
-  const user = await User.findOne({email})
-
-  if(!user){
-    return res.status(401).json({
-      success:false,
-      message:"Invalid Email or Password"
-    })
-  }
-
-  const isMatch = await bcrypt.compare(password, user.password)
-
-  if(!isMatch){
-    return res.status(401).json({
-      success:false,
-      message:"Invalid Email or Password"
-    })
-  }
-
-const token = generateToken(user._id);
-
-res.cookie("token",token,{
-  httpOnly:true,
-  secure:process.env.NODE_ENV === "production",
-  sameSite:"strict",
-  maxAge:7*24*60*60*1000,
-})
-
-  return res.status(200).json({
-    success: true,
-    message: "Login Success",
-    user:{
-      _id: user._id,
-      name: user.name,
-      username: user.username,
-      email: user.email,
-    },
-  });
-  } catch (error) {
-    console.error(error)
-    return res.status(500).json({
-      success:false,
-      message:"Internal Server Error"
-    })
-  }
-}
-  
+//! Logout Controller:-
 
 export const logout = (req, res) => {
-  res.json({
-    success: true,
-    message: "Logout controller working",
-  });
+  try {
+    res.clearCookie("tokens", {
+      hhtpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out Successfully!!",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
 };
 
 export const getMe = (req, res) => {
