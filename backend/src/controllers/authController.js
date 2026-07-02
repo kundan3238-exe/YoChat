@@ -140,9 +140,19 @@ export const logout = (req, res) => {
   }
 };
 
+//! GetMe Controller:-
+
 export const getMe = (req, res) => {
-  res.json({
-    success: true,
-    message: "GetMe controller working",
-  });
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
 };
