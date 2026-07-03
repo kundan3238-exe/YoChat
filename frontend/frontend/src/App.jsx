@@ -1,12 +1,16 @@
 
+import { Route, Routes } from 'react-router-dom'
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+
 const App = () => {
   return (
-    <>
-      <h1>
-        Hello YoChat
-      </h1>
-    </>
+    <Routes>
+      <Route path="/" element={<Login/>}/>
+      <Route path="/register" element={<Register/>}/>
+    </Routes>
   )
 }
 
 export default App
+
