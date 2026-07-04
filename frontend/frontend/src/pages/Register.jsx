@@ -6,6 +6,19 @@ export default function SignupPage() {
   const [agreed, setAgreed] = useState(false);
   const [activeDot, setActiveDot] = useState(2);
 
+  const [formData, setFormData] = useState({
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
+
+const [error, setError] = useState("");
+const [isSubmitting, setIsSubmitting] = useState(false);
+
+const { register } = useAuth();
+const navigate = useNavigate();
+
   return (
     <div className="min-h-screen w-full bg-[#0E0C14] flex items-center justify-center p-6">
       <style>{`
@@ -106,12 +119,10 @@ export default function SignupPage() {
               <div className="grid grid-cols-2 gap-3.5">
                 <input
                   type="text"
-                  placeholder="First name"
-                  className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
-                />
-                <input
-                  type="text"
-                  placeholder="Last name"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Username"
                   className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
                 />
               </div>
