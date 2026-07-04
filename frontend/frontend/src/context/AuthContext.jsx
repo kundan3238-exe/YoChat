@@ -1,4 +1,4 @@
-import { children, createContext, useState } from "react";
+import {createContext, useState ,useEffect} from "react";
 import authService from "../services/authService";
 
 const AuthContext = createContext();
@@ -34,6 +34,9 @@ const logout = async () => {
     await authService.logout()
     setUser(null)
 }
+useEffect(() => {
+  checkAuth();
+}, []);
 
   return (
     <AuthContext.Provider
