@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 import { Eye, EyeOff, ArrowRight, Apple, Check } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -7,17 +10,69 @@ export default function SignupPage() {
   const [activeDot, setActiveDot] = useState(2);
 
   const [formData, setFormData] = useState({
-  username: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-});
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-const [error, setError] = useState("");
-const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-const { register } = useAuth();
-const navigate = useNavigate();
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+
+    if (
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setError("Please fill in all fields.");
+      return;
+    }
+  console.log(formData);
+    if (!agreed) {
+      setError("Please accept the Terms & Conditions.");
+      return;
+    }
+  console.log("Agreed:", agreed);
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+  console.log("Submit clicked");
+
+    try {
+      setIsSubmitting(true);
+
+      const { confirmPassword, ...userData } = formData;
+
+      console.log("Sending to backend:", userData);
+      await register(userData);
+
+      navigate("/dashboard");
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Registration failed. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#0E0C14] flex items-center justify-center p-6">
@@ -107,34 +162,38 @@ const navigate = useNavigate();
             </h1>
             <p className="font-body text-sm text-[#8B8798] mb-8">
               Already have an account?{" "}
-              <a
-                href="Login"
+              <Link
+                to="/login"
                 className="text-[#B9A8F5] hover:text-white underline underline-offset-2 transition-colors"
               >
                 Log in
-              </a>
+              </Link>
             </p>
 
-            <form className="space-y-3.5" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-2 gap-3.5">
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Username"
-                  className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
-                />
-              </div>
+            <form className="space-y-3.5" onSubmit={handleSubmit}>
+              <input
+  type="text"
+  name="username"
+  value={formData.username}
+  onChange={handleChange}
+  placeholder="Username"
+  className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
+/>
 
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Email"
                 className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
               />
 
               <div className="relative">
                 <input
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
@@ -144,6 +203,25 @@ const navigate = useNavigate();
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6E6A7C] hover:text-[#B9A8F5] transition-colors"
+                >
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                  className="font-body w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder:text-[#6E6A7C] outline-none transition-colors focus:border-[#8A73E8]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#8A73E8]/15"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6E6A7C] hover:text-[#B9A8F5]"
                 >
                   {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
@@ -174,12 +252,15 @@ const navigate = useNavigate();
                   </a>
                 </span>
               </label>
-
+              {error && (
+                <p className="text-red-400 text-sm font-body">{error}</p>
+              )}
               <button
                 type="submit"
-                className="font-body w-full mt-2 bg-[#7C5CFC] hover:bg-[#8E71FD] text-white font-semibold text-sm rounded-xl py-3.5 transition-colors"
+                disabled={isSubmitting}
+                className="font-body w-full mt-2 bg-[#7C5CFC] hover:bg-[#8E71FD] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl py-3.5 transition-colors"
               >
-                Create account
+                {isSubmitting ? "Creating account..." : "Create account"}
               </button>
             </form>
 
