@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Eye, EyeOff, ArrowRight, Apple } from "lucide-react";
 
@@ -139,12 +139,12 @@ export default function LoginPage() {
             </h1>
             <p className="font-body text-sm text-[#8B8798] mb-8">
               Don't have an account?{" "}
-              <a
-                href="Register"
+              <Link
+                to="Register"
                 className="text-[#B9A8F5] hover:text-white underline underline-offset-2 transition-colors"
               >
                 Sign up
-              </a>
+              </Link>
             </p>
 
             <form className="space-y-3.5" onSubmit={handleSubmit}>

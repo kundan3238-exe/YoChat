@@ -9,13 +9,13 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true,
+    credentials: true,  //! Storing JWT inside Cookies
   }),
 );
 
-app.use(express.json());
+app.use(express.json()); //? Middleware
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); //? Converts html forms to req.body.
 
 app.use(cookieParser());
 
