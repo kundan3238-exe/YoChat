@@ -12,17 +12,26 @@ const sendMessage = async (req, res) => {
         $all: [senderId, receiverId],
       },
     });
+    console.log("Conversation after find/create:", conversation);
 
     if (!conversation) {
       conversation = await Conversation.create({
         participants: [senderId, receiverId],
       });
     }
+    console.log("Conversation after find/create:", conversation);
+
+    console.log(req.body);
+    console.log(message);
+
     const newMessage = await Message.create({
+      conversationId: conversation._id,
       senderId,
       receiverId,
       message,
     });
+    console.log("Conversation after find/create:", conversation);
+
     conversation.lastMessage = newMessage._id;
     await conversation.save();
     return res.status(201).json(newMessage);
@@ -33,3 +42,39 @@ const sendMessage = async (req, res) => {
     });
   }
 };
+
+const getMessages = async (req, res) => {
+  try {
+    const senderId = req.user._id;
+    const { receiverId } = req.params;
+
+    console.log("Sender:", senderId);
+console.log("Receiver:", receiverId);
+
+    const conversation = await Conversation.findOne({
+      participants: {
+        $all: [senderId, receiverId],
+      },
+    });
+    console.log("Conversation:", conversation);
+
+
+    if (!conversation) {
+      return res.status(200).json([]);
+    }
+
+    const messages = await Message.find({
+      conversationId: conversation._id,
+    }).sort({ createdAt: 1 });
+    console.log("Messages:", messages);
+
+    return res.status(200).json(messages);
+  } catch (error) {
+    console.error("Get Message Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export { sendMessage, getMessages };
