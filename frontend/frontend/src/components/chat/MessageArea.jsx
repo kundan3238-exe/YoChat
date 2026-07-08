@@ -37,11 +37,14 @@ console.log("Messages:", messages);
   return (
     
     <main className="flex-1 overflow-y-auto bg-[#0E0C14] p-6">
-      <div className="flex flex-col gap-4">
-        <MessageBubble />
-        <MessageBubble />
-        <MessageBubble />
-      </div>
+<div className="flex flex-col gap-4">
+  {messages.map((msg) => (
+    <MessageBubble
+      key={msg._id}
+      message={msg}
+    />
+  ))}
+</div>
     </main>
   );
 };
