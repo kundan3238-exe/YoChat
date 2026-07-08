@@ -22,4 +22,4 @@ export default {
   getMessages,
   sendMessage,
 };
-export default messageService;
+

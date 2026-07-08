@@ -7,7 +7,7 @@ const ChatHeader = () => {
     return (
       <header className="h-20 bg-[#17141F] border-b border-white/10 flex items-center px-6">
       <h2 className="text-gray-400 text-lg">
-        Select a conversation
+        Select to Start Chatting
       </h2>
     </header>
   );

@@ -21,7 +21,7 @@ const Sidebar = () => {
 
     fetchUsers();
   }, []);
-  console.log("Users:", users);
+  // console.log("Users:", users);
 
   if (loading) {
     return (

@@ -34,6 +34,7 @@ const sendMessage = async (req, res) => {
 
     conversation.lastMessage = newMessage._id;
     await conversation.save();
+    
     return res.status(201).json(newMessage);
   } catch (error) {
     console.error("Send Message Error:", error);
@@ -42,6 +43,9 @@ const sendMessage = async (req, res) => {
     });
   }
 };
+
+
+
 
 const getMessages = async (req, res) => {
   try {
@@ -56,17 +60,19 @@ console.log("Receiver:", receiverId);
         $all: [senderId, receiverId],
       },
     });
-    console.log("Conversation:", conversation);
 
-
+    
     if (!conversation) {
       return res.status(200).json([]);
     }
+    console.log("Conversation:", conversation);
 
     const messages = await Message.find({
       conversationId: conversation._id,
     }).sort({ createdAt: 1 });
-    console.log("Messages:", messages);
+
+console.log("Conversation ID:", conversation._id);
+console.log("Messages from DB:", messages);
 
     return res.status(200).json(messages);
   } catch (error) {

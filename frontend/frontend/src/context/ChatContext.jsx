@@ -5,7 +5,7 @@ const ChatContext = createContext();
 const ChatProvider = ({ children }) => {
   const [selectedUser, setSelectedUser] = useState(null);
 
-  console.log("ChatProvider:", selectedUser);
+  // console.log("ChatProvider:", selectedUser);
 
   return (
     <ChatContext.Provider
