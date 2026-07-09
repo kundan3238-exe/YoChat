@@ -5,16 +5,19 @@ import useAuth from "../hooks/useAuth";
 const SocketContext = createContext();
 
 const SocketProvider = ({ children }) => {
-  const { user } = useAuth();
 
+  const { user } = useAuth();
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io("http://localhost:5000", {
-      withCredentials: true,
-    });
+   const newSocket = io("http://localhost:5000", {
+  withCredentials: true,
+  auth: {
+    userId: user._id,
+  },
+});
 
     setSocket(newSocket);
 
