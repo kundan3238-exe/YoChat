@@ -9,6 +9,7 @@ const {
   messages,
   setMessages,
 } = useChat();
+
 const [loading, setLoading] = useState(false);
 
 useEffect(() => {
