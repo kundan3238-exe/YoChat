@@ -37,15 +37,18 @@ const sendMessage = async (req, res) => {
     await conversation.save();
 
     const onlineUsers = getOnlineUsers();
-const receiverSocketId = onlineUsers[receiverId];
+    const receiverSocketId = onlineUsers[receiverId];
 
-console.log("Online Users:", onlineUsers);
-console.log("Receiver Socket:", receiverSocketId);
+    const senderSocketId = onlineUsers[senderId];
+    const io = getIO();
 
-if (receiverSocketId) {
-  const io = getIO();
-  io.to(receiverSocketId).emit("newMessage", newMessage);
-}
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("newMessage", newMessage);
+    }
 
     return res.status(201).json(newMessage);
   } catch (error) {
@@ -56,14 +59,13 @@ if (receiverSocketId) {
   }
 };
 
-
 const getMessages = async (req, res) => {
   try {
     const senderId = req.user._id;
     const { receiverId } = req.params;
 
     console.log("Sender:", senderId);
-console.log("Receiver:", receiverId);
+    console.log("Receiver:", receiverId);
 
     const conversation = await Conversation.findOne({
       participants: {
@@ -71,7 +73,6 @@ console.log("Receiver:", receiverId);
       },
     });
 
-    
     if (!conversation) {
       return res.status(200).json([]);
     }
@@ -81,8 +82,8 @@ console.log("Receiver:", receiverId);
       conversationId: conversation._id,
     }).sort({ createdAt: 1 });
 
-console.log("Conversation ID:", conversation._id);
-console.log("Messages from DB:", messages);
+    console.log("Conversation ID:", conversation._id);
+    console.log("Messages from DB:", messages);
 
     return res.status(200).json(messages);
   } catch (error) {

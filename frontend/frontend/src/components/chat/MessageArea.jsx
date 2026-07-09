@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef} from "react";
 import { useChat } from "../../context/ChatContext";
 import messageService from "../../services/messageService";
 import MessageBubble from "./MessageBubble";
@@ -34,6 +34,14 @@ useEffect(() => {
   fetchMessages();
 }, [selectedUser]);
 
+const bottomRef = useRef(null);
+
+useEffect(() => {
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+}, [messages]);
+
 
 // console.log("Selected User:", selectedUser);
 // console.log("Messages:", messages);
@@ -49,7 +57,9 @@ useEffect(() => {
     />
   ))}
 </div>
+<div ref={bottomRef}></div>
     </main>
+    
   );
 };
 

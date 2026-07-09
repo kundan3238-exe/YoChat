@@ -15,12 +15,14 @@ const initSocket = (server) => {
   io.on("connection", (socket) => {
     const userId = socket.handshake.auth.userId;
     onlineUsers[userId] = socket.id;
+    io.emit("onlineUsers", Object.keys(onlineUsers));
     console.log("Online Users:", onlineUsers);
 
     console.log("✅ User Connected:", socket.id);
 
     socket.on("disconnect", () => {
       delete onlineUsers[userId];
+      io.emit("onlineUsers", Object.keys(onlineUsers));
       console.log("Online Users:", onlineUsers);
 
       console.log("❌ User Disconnected:", socket.id);

@@ -13,7 +13,8 @@ useEffect(() => {
   if (!socket) return;
 
   socket.on("newMessage", (newMessage) => {
-    setMessages((prev) => [...prev, newMessage]);
+  
+   setMessages((prev) => [...prev, newMessage]);
   });
 
   return () => {

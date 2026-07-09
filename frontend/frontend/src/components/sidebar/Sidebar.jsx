@@ -4,7 +4,7 @@ import userService from "../../services/userService";
 import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
-  const { setSelectedUser } = useChat();
+  const { selectedUser, setSelectedUser } = useChat();
   const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,13 +45,17 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto p-4">
         {" "}
         <div className="space-y-2">
-          {users.map((user) => (
+          {users.map((chatUser) => (
             <div
-              key={user._id}
-              onClick={() => setSelectedUser(user)}
-              className="p-3 rounded-lg bg-[#211D2C] cursor-pointer hover:bg-[#2B2538] transition-colors"
+              key={chatUser._id}
+              onClick={() => setSelectedUser(chatUser)}
+              className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                selectedUser?._id === chatUser._id
+                  ? "bg-violet-600"
+                  : "bg-[#211D2C] hover:bg-[#2B2538]"
+              }`}
             >
-              {user.username}
+              {chatUser.username}
             </div>
           ))}
         </div>{" "}

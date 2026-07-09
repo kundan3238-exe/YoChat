@@ -6,31 +6,35 @@ const MessageInput = () => {
   const { selectedUser, messages, setMessages } = useChat();
 
   const [text, setText] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   const handleSend = async () => {
+
+    if (isSending) return;
+
     if (!selectedUser) return;
 
     if (!text.trim()) return;
 
+    setIsSending(true); 
     try {
       const newMessage = await messageService.sendMessage(
         selectedUser._id,
         text,
       );
-
-      setMessages((prev) => [...prev, newMessage]);
-
       setText("");
     } catch (error) {
       console.error("Failed to send message:", error);
-    }
+    }finally {
+  setIsSending(false);
+}
   };
 
   return (
   <div className="border-t border-white/10 bg-[#17141F] p-4">
     <div className="flex gap-3">
       <input
-        disabled={!selectedUser}
+        disabled={!selectedUser || isSending}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
@@ -45,7 +49,7 @@ const MessageInput = () => {
 
       <button
         onClick={handleSend}
-        disabled={!selectedUser}
+        disabled={!selectedUser || isSending}
         className="px-6 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-medium disabled:opacity-50"
       >
         Send
