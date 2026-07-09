@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import userService from "../../services/userService";
+import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
   const { setSelectedUser } = useChat();
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +42,7 @@ const Sidebar = () => {
         <h1 className="text-white text-2xl font-bold">YoChat</h1>{" "}
       </div>{" "}
       {/* Middle */}{" "}
-      <div className="flex-1 p-4">
+      <div className="flex-1 overflow-y-auto p-4">
         {" "}
         <div className="space-y-2">
           {users.map((user) => (
@@ -57,7 +59,10 @@ const Sidebar = () => {
       {/* Bottom */}{" "}
       <div className="p-4 border-t border-white/10">
         {" "}
-        <p className="text-white">Current User</p>{" "}
+        <div>
+          <p className="text-white font-semibold">{user.username}</p>
+          <p className="text-sm text-gray-400">{user.email}</p>
+        </div>{" "}
       </div>{" "}
     </aside>
   );

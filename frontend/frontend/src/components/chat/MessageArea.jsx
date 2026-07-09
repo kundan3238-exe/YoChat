@@ -21,7 +21,7 @@ useEffect(() => {
 
     const data = await messageService.getMessages(selectedUser._id);
 
-    console.log("API Response:", data);
+    // console.log("API Response:", data);
 
     setMessages(data);
   } catch (error) {
@@ -35,8 +35,8 @@ useEffect(() => {
 }, [selectedUser]);
 
 
-console.log("Selected User:", selectedUser);
-console.log("Messages:", messages);
+// console.log("Selected User:", selectedUser);
+// console.log("Messages:", messages);
 
   return (
     

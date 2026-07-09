@@ -1,5 +1,6 @@
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
+import { getIO, getOnlineUsers } from "../sockets/socket.js";
 
 const sendMessage = async (req, res) => {
   try {
@@ -12,14 +13,14 @@ const sendMessage = async (req, res) => {
         $all: [senderId, receiverId],
       },
     });
-    console.log("Conversation after find/create:", conversation);
+    // console.log("Conversation after find/create:", conversation);
 
     if (!conversation) {
       conversation = await Conversation.create({
         participants: [senderId, receiverId],
       });
     }
-    console.log("Conversation after find/create:", conversation);
+    // console.log("Conversation after find/create:", conversation);
 
     console.log(req.body);
     console.log(message);
@@ -30,11 +31,22 @@ const sendMessage = async (req, res) => {
       receiverId,
       message,
     });
-    console.log("Conversation after find/create:", conversation);
+    // console.log("Conversation after find/create:", conversation);
 
     conversation.lastMessage = newMessage._id;
     await conversation.save();
-    
+
+    const onlineUsers = getOnlineUsers();
+const receiverSocketId = onlineUsers[receiverId];
+
+console.log("Online Users:", onlineUsers);
+console.log("Receiver Socket:", receiverSocketId);
+
+if (receiverSocketId) {
+  const io = getIO();
+  io.to(receiverSocketId).emit("newMessage", newMessage);
+}
+
     return res.status(201).json(newMessage);
   } catch (error) {
     console.error("Send Message Error:", error);
@@ -43,8 +55,6 @@ const sendMessage = async (req, res) => {
     });
   }
 };
-
-
 
 
 const getMessages = async (req, res) => {

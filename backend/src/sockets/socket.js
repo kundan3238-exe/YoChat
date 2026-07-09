@@ -29,5 +29,6 @@ const initSocket = (server) => {
 };
 
 const getIO = () => io;
+const getOnlineUsers = () => onlineUsers;
 
-export { initSocket, getIO };
+export { initSocket, getIO, getOnlineUsers };

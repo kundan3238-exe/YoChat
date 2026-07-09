@@ -12,7 +12,7 @@ const ChatHeader = () => {
     </header>
   );
 }
-console.log("Selected User:", selectedUser);
+// console.log("Selected User:", selectedUser);
   return (
     
     <header className="h-20 bg-[#17141F] border-b border-white/10 flex items-center justify-between px-6">
