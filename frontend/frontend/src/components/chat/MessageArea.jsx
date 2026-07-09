@@ -4,8 +4,11 @@ import messageService from "../../services/messageService";
 import MessageBubble from "./MessageBubble";
 
 const MessageArea = () => {
-  const { selectedUser } = useChat();
-const [messages, setMessages] = useState([]);
+const {
+  selectedUser,
+  messages,
+  setMessages,
+} = useChat();
 const [loading, setLoading] = useState(false);
 
 useEffect(() => {
