@@ -3,11 +3,12 @@ import { useChat } from "../../context/ChatContext";
 import userService from "../../services/userService";
 import useAuth from "../../hooks/useAuth";
 import { useSocket } from "../../context/SocketContext";
+import { useUsers } from "../../context/UserContext";
 
 const Sidebar = () => {
   const { selectedUser, setSelectedUser } = useChat();
+  const { users, setUsers } = useUsers();
   const { user } = useAuth();
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { onlineUsers } = useSocket();
 

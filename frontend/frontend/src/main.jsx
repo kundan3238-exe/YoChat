@@ -6,14 +6,17 @@ import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import { ChatProvider } from "./context/ChatContext";
 import { SocketProvider } from "./context/SocketContext";
+import { UserProvider } from "./context/UserContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
       <SocketProvider>
-      <ChatProvider>
-        <App />
-      </ChatProvider>
+        <UserProvider>
+          <ChatProvider>
+            <App />
+          </ChatProvider>
+        </UserProvider>
       </SocketProvider>
     </AuthProvider>
   </BrowserRouter>,
