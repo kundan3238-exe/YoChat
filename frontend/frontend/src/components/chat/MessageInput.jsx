@@ -44,7 +44,7 @@ const MessageInput = () => {
         }}
         
         placeholder="Type a message..."
-        className="flex-1 bg-[#211D2C] text-white px-4 py-3 rounded-xl outline-none placeholder:text-gray-500 disabled:opacity-50"
+        className="flex-1 bg-[#211D2C] text-white px-4 py-2.5 rounded-xl outline-none placeholder:text-gray-500 disabled:opacity-50"
       />
 
       <button

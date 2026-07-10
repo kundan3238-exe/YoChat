@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import userService from "../../services/userService";
 import useAuth from "../../hooks/useAuth";
+import { useSocket } from "../../context/SocketContext";
 
 const Sidebar = () => {
   const { selectedUser, setSelectedUser } = useChat();
   const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { onlineUsers } = useSocket();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -45,19 +47,51 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto p-4">
         {" "}
         <div className="space-y-2">
-          {users.map((chatUser) => (
-            <div
-              key={chatUser._id}
-              onClick={() => setSelectedUser(chatUser)}
-              className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                selectedUser?._id === chatUser._id
-                  ? "bg-violet-600"
-                  : "bg-[#211D2C] hover:bg-[#2B2538]"
-              }`}
-            >
-              {chatUser.username}
-            </div>
-          ))}
+         {users.map((chatUser) => {
+  const isOnline = onlineUsers.includes(chatUser._id);
+
+  return (
+    <div
+      key={chatUser._id}
+      onClick={() => setSelectedUser(chatUser)}
+      className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+        selectedUser?._id === chatUser._id
+          ? "bg-violet-600"
+          : "bg-[#211D2C] hover:bg-[#2B2538]"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        {/* Online / Offline Indicator */}
+        <div className="inline-grid *:[grid-area:1/1]">
+          {isOnline && (
+            <div className="status status-success animate-ping"></div>
+          )}
+
+          <div
+            className={`status ${
+              isOnline ? "status-success" : "status-neutral"
+            }`}
+          ></div>
+        </div>
+
+        {/* User Info */}
+        <div className="flex flex-col">
+          <span className="text-white font-medium">
+            {chatUser.username}
+          </span>
+
+          <span
+            className={`text-xs ${
+              isOnline ? "text-green-400" : "text-gray-400"
+            }`}
+          >
+            {isOnline ? "Online" : "Offline"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+})}
         </div>{" "}
       </div>{" "}
       {/* Bottom */}{" "}

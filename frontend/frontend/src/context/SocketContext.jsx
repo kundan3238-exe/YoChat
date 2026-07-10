@@ -8,6 +8,7 @@ const SocketProvider = ({ children }) => {
 
   const { user } = useAuth();
   const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     if (!user) return;
@@ -20,14 +21,19 @@ const SocketProvider = ({ children }) => {
 });
 
     setSocket(newSocket);
-
+newSocket.on("onlineUsers", (users) => {
+  console.log("🟢 Online Users:", users);
+  setOnlineUsers(users);
+});
     return () => {
       newSocket.disconnect();
+      newSocket.off("onlineUsers");
+
     };
   }, [user]);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}
     </SocketContext.Provider>
   );
