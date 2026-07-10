@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSocket } from "./SocketContext";
 import { useUsers } from "./UserContext";
+import useAuth from "../hooks/useAuth";
 
 const ChatContext = createContext();
 
@@ -9,32 +10,54 @@ const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const { socket } = useSocket();
   const { setUsers } = useUsers();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("newMessage", (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
+   socket.on("newMessage", (newMessage) => {
+  const chatUserId =
+    newMessage.senderId === user._id
+      ? newMessage.receiverId
+      : newMessage.senderId;
 
-      const chatUserId =
-        newMessage.senderId === user._id
-          ? newMessage.receiverId
-          : newMessage.senderId;
+  // Only append if this conversation is currently open
+  if (selectedUser?._id === chatUserId) {
+    setMessages((prev) => [...prev, newMessage]);
+  }
 
-      setUsers((prevUsers) => {
-        const chatUser = prevUsers.find((u) => u._id === chatUserId);
+  setUsers((prevUsers) => {
+    const updatedUsers = prevUsers.map((chatUser) => {
+  if (chatUser._id !== chatUserId) {
+    return chatUser;
+  }
 
-        if (!chatUser) return prevUsers;
+  const shouldIncrease =
+    newMessage.senderId !== user._id &&
+    selectedUser?._id !== chatUserId;
 
-        const remainingUsers = prevUsers.filter((u) => u._id !== chatUserId);
+  return {
+    ...chatUser,
+    unreadCount: shouldIncrease
+      ? chatUser.unreadCount + 1
+      : chatUser.unreadCount,
+  };
+});
 
-        return [chatUser, ...remainingUsers];
-      });
-    });
+const movedUser = updatedUsers.find(
+  (user) => user._id === chatUserId
+);
+
+const remainingUsers = updatedUsers.filter(
+  (user) => user._id !== chatUserId
+);
+
+return [movedUser, ...remainingUsers];  });
+});
     return () => {
       socket.off("newMessage");
     };
-  }, [socket]);
+  }, [socket, selectedUser, user, setUsers]);
 
   // console.log("ChatProvider:", selectedUser);
 

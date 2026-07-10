@@ -140,7 +140,7 @@ export default function LoginPage() {
             <p className="font-body text-sm text-[#8B8798] mb-8">
               Don't have an account?{" "}
               <Link
-                to="Register"
+                to="/"
                 className="text-[#B9A8F5] hover:text-white underline underline-offset-2 transition-colors"
               >
                 Sign up

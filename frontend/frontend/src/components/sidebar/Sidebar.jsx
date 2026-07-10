@@ -16,7 +16,13 @@ const Sidebar = () => {
     const fetchUsers = async () => {
       try {
         const data = await userService.getUsers();
-        setUsers(data);
+
+        setUsers(
+          data.map((user) => ({
+            ...user,
+            unreadCount: 0,
+          })),
+        );
       } catch (error) {
         console.error("Failed to fetch users:", error);
       } finally {
@@ -48,21 +54,33 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto p-4">
         {" "}
         <div className="space-y-2">
-         {users.map((chatUser) => {
-  const isOnline = onlineUsers.includes(chatUser._id);
+          {users.map((chatUser) => {
+            const isOnline = onlineUsers.includes(chatUser._id);
 
-  return (
-    <div
-      key={chatUser._id}
-      onClick={() => setSelectedUser(chatUser)}
-      className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-        selectedUser?._id === chatUser._id
-          ? "bg-violet-600"
-          : "bg-[#211D2C] hover:bg-[#2B2538]"
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        {/* Online / Offline Indicator */}
+           return (
+  <div
+    key={chatUser._id}
+    onClick={() => {
+      setSelectedUser(chatUser);
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === chatUser._id
+            ? { ...user, unreadCount: 0 }
+            : user
+        )
+      );
+    }}
+    className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+      selectedUser?._id === chatUser._id
+        ? "bg-violet-600"
+        : "bg-[#211D2C] hover:bg-[#2B2538]"
+    }`}
+  >
+    <div className="flex items-center justify-between">
+      {/* Left Side */}
+      <div className="flex items-center gap-4">
+        {/* Online Status */}
         <div className="inline-grid *:[grid-area:1/1]">
           {isOnline && (
             <div className="status status-success animate-ping"></div>
@@ -90,9 +108,17 @@ const Sidebar = () => {
           </span>
         </div>
       </div>
+
+      {/* Unread Badge */}
+      {chatUser.unreadCount > 0 && (
+        <div className="min-w-6 h-6 px-2 rounded-full bg-violet-600 text-white text-xs font-semibold flex items-center justify-center">
+          {chatUser.unreadCount}
+        </div>
+      )}
     </div>
-  );
-})}
+  </div>
+);
+          })}
         </div>{" "}
       </div>{" "}
       {/* Bottom */}{" "}
