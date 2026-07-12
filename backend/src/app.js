@@ -5,6 +5,7 @@ import Routes from "./routes/Routes.js";
 import authRoutes from "./routes/authRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import conversationRoutes from "./routes/conversationRoutes.js";
 
 const app = express();
 
@@ -28,5 +29,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/conversations", conversationRoutes);
 
 export default app;

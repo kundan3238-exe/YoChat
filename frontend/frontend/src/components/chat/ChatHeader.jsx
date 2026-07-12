@@ -1,9 +1,9 @@
 import { useChat } from "../../context/ChatContext";
 
 const ChatHeader = () => {
-  const { selectedUser } = useChat();
-  
-  if (!selectedUser) {
+const { selectedConversation } = useChat();
+
+if (!selectedConversation)
     return (
       <header className="h-20 bg-[#17141F] border-b border-white/10 flex items-center px-6">
       <h2 className="text-gray-400 text-lg">
@@ -11,23 +11,21 @@ const ChatHeader = () => {
       </h2>
     </header>
   );
-}
-// console.log("Selected User:", selectedUser);
   return (
     
     <header className="h-20 bg-[#17141F] border-b border-white/10 flex items-center justify-between px-6">
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold">
-          {selectedUser.username.charAt(0).toUpperCase()}
+          {selectedConversation.user.username.charAt(0).toUpperCase()}
         </div>
 
         <div>
           <h2 className="text-white font-semibold text-lg">
-            {selectedUser.username}
+            {selectedConversation.user.username}
           </h2>
 
           <p className="text-green-400 text-sm">
-            @{selectedUser.username}
+            @{selectedConversation.user.username}
           </p>
         </div>
       </div>

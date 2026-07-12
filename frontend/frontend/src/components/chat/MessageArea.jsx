@@ -5,7 +5,7 @@ import MessageBubble from "./MessageBubble";
 
 const MessageArea = () => {
 const {
-  selectedUser,
+  selectedConversation,
   messages,
   setMessages,
 } = useChat();
@@ -13,14 +13,14 @@ const {
 const [loading, setLoading] = useState(false);
 
 useEffect(() => {
-  if (!selectedUser) return;
-
+if (!selectedConversation) return;
   const fetchMessages = async () => {
   try {
     setLoading(true);
 
-    const data = await messageService.getMessages(selectedUser._id);
-
+const data = await messageService.getMessages(
+  selectedConversation.user._id
+);
     // console.log("API Response:", data);
 
     setMessages(data);
@@ -32,7 +32,7 @@ useEffect(() => {
 };
 
   fetchMessages();
-}, [selectedUser]);
+}, [selectedConversation]);
 
 const bottomRef = useRef(null);
 
@@ -43,8 +43,7 @@ useEffect(() => {
 }, [messages]);
 
 
-// console.log("Selected User:", selectedUser);
-// console.log("Messages:", messages);
+
 
   return (
     
