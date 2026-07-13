@@ -1,11 +1,19 @@
-import API from "../api/axios";
+import api from "../api/axios";
 
-// GET /api/conversations
+//  /api/conversations
 const getConversations = async () => {
-  const response = await API.get("/conversations");
+  const response = await api.get("/conversations");
+  return response.data;
+};
+const createConversation = async (receiverId) => {
+  const response = await api.post("/conversations", {
+    receiverId,
+  });
+
   return response.data;
 };
 
 export default {
   getConversations,
+  createConversation
 };

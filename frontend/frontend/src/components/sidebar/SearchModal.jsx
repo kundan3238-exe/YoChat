@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import userService from "../../services/userService";
+import conversationService from "../../services/conversationService";
+import { useChat } from "../../context/ChatContext";
+import useAuth from "../../hooks/useAuth";
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const { conversations, setConversations, setSelectedConversation } =
+    useChat();
+  const { user: currentUser } = useAuth();
+  const [creatingConversation, setCreatingConversation] = useState(false);
 
   console.log("SearchModal isOpen:", isOpen);
 
@@ -39,6 +46,47 @@ const SearchModal = ({ isOpen, onClose }) => {
       user.email.toLowerCase().includes(search.toLowerCase()),
   );
 
+const handleStartChat = async (user) => {
+  if (creatingConversation) return;
+
+  setCreatingConversation(true);
+
+  try {
+    const { conversation } = await conversationService.createConversation(
+      user._id
+    );
+
+    const existingConversation = conversations.find(
+      (chat) => chat._id === conversation._id
+    );
+
+    if (existingConversation) {
+      setSelectedConversation(existingConversation);
+    } else {
+      const chatPartner = conversation.participants.find(
+        (participant) => participant._id !== currentUser._id
+      );
+
+      const newConversation = {
+        _id: conversation._id,
+        user: chatPartner,
+        lastMessage: conversation.lastMessage,
+        updatedAt: conversation.updatedAt,
+        unreadCount: 0,
+      };
+
+      setConversations((prev) => [newConversation, ...prev]);
+      setSelectedConversation(newConversation);
+    }
+
+    onClose();
+  } catch (error) {
+    console.error("Failed to create conversation:", error);
+  } finally {
+    setCreatingConversation(false);
+  }
+};
+
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="w-[420px] rounded-2xl bg-[#17141F] p-6">
@@ -70,8 +118,19 @@ const SearchModal = ({ isOpen, onClose }) => {
             filteredUsers.map((user) => (
               <div
                 key={user._id}
-                className="flex items-center justify-between p-3 rounded-xl bg-[#211D2C] hover:bg-[#2B2538] cursor-pointer transition"
+              onClick={() => {
+  if (!creatingConversation) {
+    handleStartChat(user);
+  }
+}}
+                
+className={`flex items-center justify-between p-3 rounded-xl transition ${
+  creatingConversation
+    ? "opacity-50 pointer-events-none"
+    : "bg-[#211D2C] hover:bg-[#2B2538] cursor-pointer"
+}`}
               >
+                
                 <div>
                   <p className="text-white font-medium">{user.username}</p>
                   <p className="text-gray-400 text-sm">{user.email}</p>
