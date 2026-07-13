@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import useAuth from "../../hooks/useAuth";
 import { useSocket } from "../../context/SocketContext";
+import SearchModal from "./SearchModal";
 
 const Sidebar = () => {
   const {
@@ -9,7 +11,7 @@ const Sidebar = () => {
     selectedConversation,
     setSelectedConversation,
   } = useChat();
-
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { user } = useAuth();
   const { onlineUsers } = useSocket();
 
@@ -19,6 +21,16 @@ const Sidebar = () => {
       <div className="p-6 border-b border-white/10">
         <h1 className="text-white text-2xl font-bold">YoChat</h1>
       </div>
+
+      <button
+        onClick={() => {
+          console.log("Button clicked");
+          setIsSearchOpen(true);
+        }}
+        className="mt-4 w-full bg-violet-600 hover:bg-violet-700 text-white py-2 rounded-xl transition"
+      >
+        + New Chat
+      </button>
 
       {/* Middle */}
       <div className="flex-1 overflow-y-auto p-4">
@@ -116,6 +128,10 @@ const Sidebar = () => {
           <p className="text-sm text-gray-400">{user.email}</p>
         </div>
       </div>
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </aside>
   );
 };
