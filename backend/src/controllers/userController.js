@@ -57,5 +57,39 @@ const getUsersForSidebar = async (req, res) => {
     });
   }
 };
+const searchUsers = async (req, res) => {
+  try {
+const loggedInUserId = req.user._id;
+const { q } = req.query;
+const users = await User.find({
+  _id: { $ne: loggedInUserId },
+  $or: [
+    {
+      username: {
+        $regex: q,
+        $options: "i",
+      },
+    },
+    {
+      email: {
+        $regex: q,
+        $options: "i",
+      },
+    },
+  ],
+}).select("username email");
+return res.status(200).json({
+  success: true,
+  users,
+});
 
-export { getUsersForSidebar };
+  } catch (error) {
+    console.error("Search Users Error:", error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export { getUsersForSidebar, searchUsers };
