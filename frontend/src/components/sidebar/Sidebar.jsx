@@ -12,7 +12,7 @@ const Sidebar = () => {
     setSelectedConversation,
   } = useChat();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { user } = useAuth();
+  const { user , logout} = useAuth();
   const { onlineUsers } = useSocket();
 
   return (
@@ -124,8 +124,19 @@ const Sidebar = () => {
       {/* Bottom */}
       <div className="p-4 border-t border-white/10">
         <div>
-          <p className="text-white font-semibold">{user.username}</p>
-          <p className="text-sm text-gray-400">{user.email}</p>
+          <div className="flex items-center justify-between">
+  <div>
+    <p className="text-white font-semibold">{user.username}</p>
+    <p className="text-sm text-gray-400">{user.email}</p>
+  </div>
+
+  <button
+    onClick={logout}
+    className="px-3 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition text-white text-sm"
+  >
+    Logout
+  </button>
+</div>
         </div>
       </div>
       <SearchModal

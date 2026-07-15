@@ -3,11 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Eye, EyeOff, ArrowRight, Apple } from "lucide-react";
 
-/**
- * LoginPage
- * Companion to SignupPage — same illustrated dusk-dune scene on the left,
- * a sign-in form on the right, both wrapped in one rounded card.
- */
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -102,12 +97,6 @@ export default function LoginPage() {
               </span>
             </div>
 
-            {/* back to website pill */}
-            <button className="font-body absolute top-6 right-6 flex items-center gap-1.5 bg-white/10 hover:bg-white/[0.16] backdrop-blur-sm text-white text-xs font-medium px-3.5 py-2 rounded-full transition-colors">
-              Back to website
-              <ArrowRight size={13} />
-            </button>
-
             {/* caption */}
             <div className="absolute bottom-8 left-7 right-7">
               <h2 className="font-display text-white text-[26px] leading-snug font-semibold mb-5">
@@ -140,7 +129,7 @@ export default function LoginPage() {
             <p className="font-body text-sm text-[#8B8798] mb-8">
               Don't have an account?{" "}
               <Link
-                to="/"
+                to="/register"
                 className="text-[#B9A8F5] hover:text-white underline underline-offset-2 transition-colors"
               >
                 Sign up
