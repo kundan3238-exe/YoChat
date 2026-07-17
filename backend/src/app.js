@@ -11,11 +11,26 @@ import conversationRoutes from "./routes/conversationRoutes.js";
 const app = express();
 
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://yo-chat-silk.vercel.app",
+  "https://yo-chat-chy7z0oka-kundan-atels-projects.vercel.app",
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin(origin, callback) {
+      // Allow tools like Postman or same-server requests
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
-  }),
+  })
 );
 
 app.use(express.json()); //? Middleware
