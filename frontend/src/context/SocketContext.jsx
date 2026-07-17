@@ -13,8 +13,7 @@ const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-   const newSocket = io("http://localhost:5000", {
-  withCredentials: true,
+const newSocket = io(import.meta.env.VITE_SOCKET_URL, {  withCredentials: true,
   auth: {
     userId: user._id,
   },
