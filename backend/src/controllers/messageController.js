@@ -42,6 +42,11 @@ const sendMessage = async (req, res) => {
     const senderSocketId = onlineUsers[senderId];
     const io = getIO();
 
+console.log("📤 Sending Socket Event");
+console.log("Receiver Socket:", receiverSocketId);
+console.log("Sender Socket:", senderSocketId);
+console.log("Message:", newMessage);
+
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }

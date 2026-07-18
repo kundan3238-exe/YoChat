@@ -16,15 +16,27 @@ const ChatProvider = ({ children }) => {
     if (!socket) return;
 
     socket.on("newMessage", (newMessage) => {
-      const chatUserId =
-        newMessage.senderId === user._id
-          ? newMessage.receiverId
-          : newMessage.senderId;
+      
+      console.log("🔥 Socket received:", newMessage);
 
-      // Only append if this conversation is currently open
-if (selectedConversation?.user._id === chatUserId) {
-  setMessages((prev) => [...prev, newMessage]);
-}
+      console.log("Incoming:", newMessage);
+      console.log("senderId:", newMessage.senderId);
+      console.log("receiverId:", newMessage.receiverId);
+      console.log("currentUser:", user._id);
+
+      const senderId = newMessage.senderId.toString();
+      const receiverId = newMessage.receiverId.toString();
+      const currentUserId = user._id.toString();
+
+      const chatUserId = senderId === currentUserId ? receiverId : senderId;
+      if (
+        selectedConversation &&
+        selectedConversation.user._id.toString() === chatUserId.toString()
+      ) {
+        console.log("Appending message");
+        setMessages((prev) => [...prev, newMessage]);
+      }
+
       setConversations((prevConversations) => {
         const updatedConversations = prevConversations.map((conversation) => {
           if (conversation._id !== newMessage.conversationId) {
@@ -35,11 +47,11 @@ if (selectedConversation?.user._id === chatUserId) {
             lastMessage: newMessage,
             updatedAt: newMessage.createdAt,
 
-unreadCount:
-  newMessage.senderId !== user._id &&
-  selectedConversation?.user._id !== conversation.user._id
-    ? conversation.unreadCount + 1
-    : conversation.unreadCount,
+            unreadCount:
+              newMessage.senderId !== user._id &&
+              selectedConversation?.user._id !== conversation.user._id
+                ? conversation.unreadCount + 1
+                : conversation.unreadCount,
           };
         });
 
@@ -57,7 +69,7 @@ unreadCount:
     return () => {
       socket.off("newMessage");
     };
-}, [socket, selectedConversation, user]);
+  }, [socket, selectedConversation, user]);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -90,7 +102,6 @@ unreadCount:
   useEffect(() => {
     console.log("Conversations state:", conversations);
   }, [conversations]);
-
 
   return (
     <ChatContext.Provider
